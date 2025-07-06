@@ -13,10 +13,20 @@ let stream = null;
 // 🎥 Démarrer la webcam
 startCameraButton.addEventListener('click', async () => {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: "environment" } } // Caméra arrière
+    });
     video.srcObject = stream;
   } catch (err) {
-    alert("Erreur lors de l'accès à la caméra : " + err.message);
+    alert("Erreur lors de l'accès à la caméra arrière. Caméra frontale utilisée à la place.");
+
+    // Fallback : caméra frontale si arrière indisponible
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Caméra frontale
+      video.srcObject = stream;
+    } catch (err2) {
+      alert("Impossible d'accéder à la caméra : " + err2.message);
+    }
   }
 });
 
