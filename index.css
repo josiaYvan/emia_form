@@ -87,3 +87,43 @@ button:hover {
 #submit:hover {
   background-color: #029a0c;
 }
+
+#loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent */
+  z-index: 9999; /* très au-dessus */
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2em;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+#loading-overlay.show {
+  display: flex;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #ffffff;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

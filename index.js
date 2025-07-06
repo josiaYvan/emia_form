@@ -44,12 +44,15 @@ takePhotoButton.addEventListener('click', () => {
   alert("📸 Photo capturée !");
 });
 
-
 form.addEventListener('submit', e => {
   e.preventDefault();
 
   const canvas = document.getElementById('canvas');
   const imageInput = document.getElementById('image-data');
+  const loadingOverlay = document.getElementById('loading-overlay');
+
+  // Afficher le loading
+  loadingOverlay.classList.add('show');
 
   // Si la caméra a été utilisée, prendre la photo dans le champ caché
   if (canvas && imageInput && canvas.toDataURL) {
@@ -63,8 +66,16 @@ form.addEventListener('submit', e => {
     method: 'POST',
     body: formData
   })
-  .then(response => alert("✅ Merci ! Formulaire envoyé."))
-  .then(() => window.location.reload())
-  .catch(error => console.error('❌ Erreur!', error.message));
+  .then(response => {
+    alert("✅ Merci ! Formulaire envoyé.");
+    window.location.reload();
+  })
+  .catch(error => {
+    console.error('❌ Erreur!', error.message);
+    alert("❌ Une erreur est survenue !");
+  })
+  .finally(() => {
+    loadingOverlay.classList.remove('show'); // cacher même en cas d'erreur
+  });
 });
 
