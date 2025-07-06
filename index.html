@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <title>Membre Eglise EMIA</title>
+</head>
+<body>
+  <div class="container">
+    <form method="post" action="" name="contact-form">
+      <h2>Membre Eglise EMIA</h2>
+
+      <!-- Iza no mameno an'ilay questionnaire -->
+      <label>Iza no mameno an'ilay questionnaire?*</label>
+      <select name="filled-by" required>
+        <option value="" disabled selected>Veuillez sélectionner</option>
+        <option value="Annie">Annie</option>
+        <option value="Anna">Anna</option>
+        <option value="Santa">Santa</option>
+        <option value="Flavien">Flavien</option>
+        <option value="Fleurna">Fleurna</option>
+        <option value="Hasina">Hasina</option>
+        <option value="Sarobidy">Sarobidy</option>
+      </select>
+
+      <!-- Type de carte -->
+      <label>Type de carte*</label>
+      <select name="card-type" required>
+        <option value="" disabled selected>Veuillez sélectionner</option>
+        <option value="Tsotra">Tsotra</option>
+        <option value="Premium">Premium</option>
+        <option value="VIP">VIP</option>
+      </select>
+
+      <!-- Civilité -->
+      <label>Civilité*</label>
+      <select name="civility" required>
+        <option value="" disabled selected>Veuillez sélectionner</option>
+        <option value="Mr">Mr</option>
+        <option value="Me">Me</option>
+        <option value="Mlle">Mlle</option>
+      </select>
+
+      <!-- Anarana fiantsoana -->
+      <label>Anarana fiantsoana*</label>
+      <input type="text" name="firstname" placeholder="Annie" required>
+
+      <!-- Andraikitra -->
+      <label>Andraikitra*</label>
+      <select name="role" required>
+        <option value="" disabled selected>Veuillez sélectionner</option>
+        <option value="Mpiandraikitra kely">Mpiandraikitra kely</option>
+        <option value="Mpiandraikitra be">Mpiandraikitra be</option>
+        <option value="Mpiandry">Mpiandry</option>
+        <option value="Solom-pitandrina">Solom-pitandrina</option>
+        <option value="Reverend">Reverend</option>
+        <option value="Pasteur">Pasteur</option>
+        <option value="Pasteur Stagiaire">Pasteur Stagiaire</option>
+        <option value="Mpino tsotra">Mpino tsotra</option>
+      </select>
+
+      <!-- Quartier -->
+      <label>Quartier*</label>
+      <input type="text" name="quartier" placeholder="Andranomena" required>
+
+      <!-- Numéro de téléphone -->
+      <label>Numéro de téléphone</label>
+      <input type="tel" name="phone" placeholder="0340130237" pattern="[0-9]{10}" required>
+      <small>Merci de saisir un numéro de téléphone valide.</small>
+
+      <!-- Date de naissance -->
+      <label>Date de naissance</label>
+      <input type="date" name="birthdate" placeholder="JJ-MM-AAAA">
+
+      <!-- Photo (via webcam) -->
+      <label>Photo*</label>
+      <div>
+        <video id="video" width="300" height="225" autoplay></video><br>
+        <button type="button" id="start-camera">📷 Démarrer la caméra</button>
+        <button type="button" id="take-photo">📸 Prendre une photo</button><br>
+        <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
+        <img id="photo-preview" width="300" style="margin-top: 10px; display: none; border-radius: 8px; border: 1px solid #ccc;" alt="Aperçu de la photo capturée">
+        <input type="hidden" name="image" id="image-data">
+      </div>
+
+      <!-- Taille Akanjo -->
+      <label>Taille Akanjo*</label>
+      <select name="size" required>
+        <option value="" disabled selected>Veuillez sélectionner</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+      </select>
+
+      <!-- Bouton d'envoi -->
+      <button type="submit" id="submit">Valider</button>
+    </form>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
