@@ -22,12 +22,21 @@ startCameraButton.addEventListener('click', async () => {
 
 takePhotoButton.addEventListener('click', () => {
   if (!stream) return alert("Caméra non démarrée !");
+  
+  // Adapter dynamiquement la taille du canvas à celle de la vidéo
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
+
+  canvas.width = videoWidth;
+  canvas.height = videoHeight;
+
   const context = canvas.getContext('2d');
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  context.drawImage(video, 0, 0, videoWidth, videoHeight);
+
   const imageData = canvas.toDataURL('image/jpeg');
   imageInput.value = imageData.split(',')[1]; // base64 sans préfixe
 
-  // ➕ Mise à jour de l'aperçu
+  // Aperçu de l'image capturée
   const photoPreview = document.getElementById('photo-preview');
   photoPreview.src = imageData;
   photoPreview.style.display = 'block';
