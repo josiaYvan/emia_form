@@ -33,7 +33,8 @@ function doPost(e) {
   }
 
   // Ajout dans la feuille Google Sheets
-  const onlyDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+  const onlyDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "dd/MM/yyyy");
+  console.log('line:37 onlyDate\t---> ', onlyDate);
 
   sheet.appendRow([
     onlyDate,       // Date uniquement (sans heure)
@@ -47,7 +48,8 @@ function doPost(e) {
     birthdate,
     date,
     size,
-    imageUrl
+    imageUrl,
+    new Date()
   ]);
 
 
