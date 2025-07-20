@@ -1,39 +1,76 @@
 const scriptURL = 'https://script.google.com/macros/s/AKfycbyG5OQnVSZ9gXSK14fBlgYAG1lJgWbA2IrmBAY-GD8OY4zCurYPWFZVd9Hm2PRi78b3/exec'
 
 const form = document.forms['contact-form'];
-
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const imageInput = document.getElementById('image-data');
-const startCameraButton = document.getElementById('start-camera');
+const cameraSelect = document.getElementById('camera-select');
+const photoPreview = document.getElementById('photo-preview');
 const takePhotoButton = document.getElementById('take-photo');
+const photoControls = document.getElementById('photo-controls');
+const loadingOverlay = document.getElementById('loading-overlay');
+const retakePhotoButton = document.getElementById('retake-photo');
+
 
 let stream = null;
 
-// 🎥 Démarrer la webcam
-startCameraButton.addEventListener('click', async () => {
+// 🛑 Stopper une éventuelle ancienne caméra
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+}
+
+// 🔍 Lister les caméras disponibles
+async function listCameras() {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { exact: "environment" } } // Caméra arrière
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+    cameraSelect.innerHTML = '<option value="">📷 Caméra par défaut (arrière si possible)</option>';
+
+    videoDevices.forEach((device, index) => {
+      const option = document.createElement('option');
+      option.value = device.deviceId;
+      option.text = device.label || `Caméra ${index + 1}`;
+      cameraSelect.appendChild(option);
     });
+  } catch (err) {
+    alert("Erreur lors de la détection des caméras : " + err.message);
+  }
+}
+
+// 🎥 Démarrer la caméra selon l’option sélectionnée
+async function startCameraFromSelection(deviceId) {
+  stopCamera();
+
+  try {
+    if (deviceId) {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: deviceId } }
+      });
+    } else {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: 'environment' } }
+      });
+    }
     video.srcObject = stream;
   } catch (err) {
-    alert("Erreur lors de l'accès à la caméra arrière. Caméra frontale utilisée à la place.");
-
-    // Fallback : caméra frontale si arrière indisponible
+    alert("Erreur avec la caméra choisie. Caméra frontale utilisée à la place.");
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Caméra frontale
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
       video.srcObject = stream;
     } catch (err2) {
       alert("Impossible d'accéder à la caméra : " + err2.message);
     }
   }
-});
+}
 
+// 📸 Prendre une photo
 takePhotoButton.addEventListener('click', () => {
   if (!stream) return alert("Caméra non démarrée !");
-  
-  // Adapter dynamiquement la taille du canvas à celle de la vidéo
+
   const videoWidth = video.videoWidth;
   const videoHeight = video.videoHeight;
 
@@ -44,30 +81,44 @@ takePhotoButton.addEventListener('click', () => {
   context.drawImage(video, 0, 0, videoWidth, videoHeight);
 
   const imageData = canvas.toDataURL('image/jpeg');
-  imageInput.value = imageData.split(',')[1]; // base64 sans préfixe
+  imageInput.value = imageData.split(',')[1];
 
-  // Aperçu de l'image capturée
-  const photoPreview = document.getElementById('photo-preview');
+  // ➕ Afficher la photo capturée
+  video.style.display = 'none';
   photoPreview.src = imageData;
   photoPreview.style.display = 'block';
 
-  alert("📸 Photo capturée !");
+  // ➕ Afficher bouton "Reprendre"
+  takePhotoButton.style.display = 'none';
+  retakePhotoButton.style.display = 'inline-block';
 });
 
+// 🔁 Reprendre une photo
+retakePhotoButton.addEventListener('click', async () => {
+  photoPreview.style.display = 'none';
+  video.style.display = 'block';
+
+  // Relancer la caméra sélectionnée
+  const selectedDeviceId = cameraSelect.value;
+  await startCameraFromSelection(selectedDeviceId);
+
+  // Réafficher les bons boutons
+  takePhotoButton.style.display = 'inline-block';
+  retakePhotoButton.style.display = 'none';
+
+  // Réinitialiser l'image stockée
+  imageInput.value = '';
+});
+
+// 📦 Envoi du formulaire
 form.addEventListener('submit', e => {
   e.preventDefault();
-
-  const canvas = document.getElementById('canvas');
-  const imageInput = document.getElementById('image-data');
-  const loadingOverlay = document.getElementById('loading-overlay');
-
-  // Afficher le loading
   loadingOverlay.classList.add('show');
 
-  // Si la caméra a été utilisée, prendre la photo dans le champ caché
+  // S'assurer qu'une image est bien prise
   if (canvas && imageInput && canvas.toDataURL) {
     const imageData = canvas.toDataURL('image/jpeg');
-    imageInput.value = imageData.split(',')[1]; // base64 sans préfixe
+    imageInput.value = imageData.split(',')[1];
   }
 
   const formData = new FormData(form);
@@ -76,16 +127,26 @@ form.addEventListener('submit', e => {
     method: 'POST',
     body: formData
   })
-  .then(response => {
-    alert("✅ Merci ! Formulaire envoyé.");
-    window.location.reload();
-  })
-  .catch(error => {
-    console.error('❌ Erreur!', error.message);
-    alert("❌ Une erreur est survenue !");
-  })
-  .finally(() => {
-    loadingOverlay.classList.remove('show'); // cacher même en cas d'erreur
-  });
+    .then(response => {
+      alert("✅ Merci ! Formulaire envoyé.");
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error('❌ Erreur!', error.message);
+      alert("❌ Une erreur est survenue !");
+    })
+    .finally(() => {
+      loadingOverlay.classList.remove('show');
+    });
 });
 
+// ⚙️ Événement lors du changement de caméra
+cameraSelect.addEventListener('change', () => {
+  const selectedDeviceId = cameraSelect.value;
+  startCameraFromSelection(selectedDeviceId);
+});
+
+// 🚀 Démarrage initial
+window.addEventListener('DOMContentLoaded', () => {
+  listCameras();
+});

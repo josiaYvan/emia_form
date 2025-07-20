@@ -81,15 +81,24 @@
       <input type="date" name="birthdate" placeholder="JJ-MM-AAAA">
 
       <!-- Photo (via webcam) -->
-      <label>Photo*</label>
       <div>
-        <video id="video" autoplay playsinline style="max-width: 100%; border: 1px solid #ccc; border-radius: 8px;"></video><br>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <img id="photo-preview" style="display: none; margin-top: 10px; max-width: 100%; border-radius: 8px; border: 1px solid #ccc;" alt="Aperçu de la photo capturée">
-        <button type="button" id="start-camera">📷 Démarrer la caméra</button>
-        <button type="button" id="take-photo">📸 Prendre une photo</button><br>
-        <input type="hidden" name="image" id="image-data">
+      <label>Photo*</label>
+      <label for="camera-select">Choisir la caméra :</label>
+      <select id="camera-select">
+        <option value="">📷 Caméra par défaut (arrière si possible)</option>
+      </select>
+
+      <video id="video" autoplay playsinline style="max-width: 100%; border: 1px solid #ccc; border-radius: 8px;"></video>
+      <canvas id="canvas" style="display: none;"></canvas>
+      <img id="photo-preview" style="display: none; margin-top: 10px; max-width: 100%; border-radius: 8px; border: 1px solid #ccc;" alt="Aperçu de la photo capturée">
+
+      <div id="photo-controls">
+        <button type="button" id="take-photo">📸 Prendre une photo</button>
+        <button type="button" id="retake-photo" style="display: none;">♻️ Reprendre</button>
       </div>
+
+      <input type="hidden" name="image" id="image-data">
+    </div>
 
       <!-- Taille Akanjo -->
       <label>Taille Akanjo*</label>
