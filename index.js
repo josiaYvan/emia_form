@@ -51,9 +51,16 @@ async function startCameraFromSelection(deviceId) {
         video: { deviceId: { exact: deviceId } }
       });
     } else {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: 'environment' } }
-      });
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: 'environment' } }
+        });
+      } catch (error) {
+        // Si la caméra arrière n’est pas disponible, utiliser la caméra frontale
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' }
+        });
+      }
     }
     video.srcObject = stream;
   } catch (err) {
@@ -149,4 +156,5 @@ cameraSelect.addEventListener('change', () => {
 // 🚀 Démarrage initial
 window.addEventListener('DOMContentLoaded', () => {
   listCameras();
+  startCameraFromSelection();
 });
